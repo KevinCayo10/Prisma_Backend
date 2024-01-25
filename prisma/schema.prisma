@@ -10,18 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Product {
   id Int @id @default(autoincrement())
-  email String @unique
-  name String 
-  lastname String? // ? : Campo opcional
-  posts Post[]
+  name String
+  price Float @default(5)
+  stock Int @default(2)
+  createdAt DateTime @default(now())
+  category Category @relation(fields: [categoryId], references: [id])
+  categoryId Int 
 }
 
-model Post{
+model Category{
   id Int @id @default(autoincrement())
-  title String
-  content String
-  authorId Int 
-  author User @relation(fields:[authorId], references: [id])
+  name String 
+  products Product[]
 }
