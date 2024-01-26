@@ -10,6 +10,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Usuarios{
+  id_usu Int @id @default(autoincrement())
+  user_usu String @unique @db.VarChar(100)
+  pass_usu String @db.VarChar(255)
+  rol_usu String @db.VarChar(20)
+} 
+
+model Categorias{
+  id_cate Int @id @default(autoincrement())
+  nom_cate String @db.VarChar(100)
+  desc_cate String @db.VarChar(1000)
+  estado_cate Int @db.SmallInt
+  cursos Cursos[]
+}
+
+model Cursos{
+  id_cur Int @id @default(autoincrement())
+  nom_cur String @db.VarChar(100)
+  fecha_inicio_cur DateTime @db.Date
+  feacha_fin_cur DateTime @db.Date
+  dur_cur String @db.VarChar(100)
+  url_cer String @db.VarChar(1000)
+  estado_cur Int @db.SmallInt
+  id_cate_cur Int
+  categoria Categorias @relation(fields: [id_cate_cur],references: [id_cate])
+  generar_certificados Generar_Certificados[]
+  detalle_cursos Detalle_cursos[]
+}
+
+model Firmas {
+  ced_fir String @id @db.VarChar(10)
+  nom_pat_fir String @db.VarChar(50)
+  nom_mat_fir String @db.VarChar(50)
+  ape_pat_fir String @db.VarChar(50)
+  ape_mat_fir String @db.VarChar(50)
+  cargo_fir String @db.VarChar(50)
+  tit_ter_fir Boolean
+  tit_cuar_fir Boolean
+  url_firma String @db.VarChar(1000)
+  estado_fir Int @db.SmallInt 
+  detalle_cursos Detalle_cursos[]
+}
+
+model Detalle_cursos {
+  id_det_cur  Int @id @default(autoincrement())
+  id_cur Int
+  ced_fir String
+  curso Cursos @relation(fields: [id_cur],references: [id_cur])
+  firma Firmas @relation(fields: [ced_fir],references: [ced_fir])
+}
+
+model Generar_Certificados{
+  id_gen_cer Int @id @default(autoincrement())
+  url_gen_cer String @db.VarChar(1000)
+  cod_gen_cer String @db.VarChar(1000)
+  estado_cer String @db.VarChar(50)
+  fecha_gen_cer DateTime @db.Date
+  id_cur_cer Int
+  ced_par_cer String
+  curso Cursos @relation(fields: [id_cur_cer],references: [id_cur])
+  participante Participantes @relation(fields: [ced_par_cer],references: [ced_par])
+}
+
+model Participantes {
+  ced_par String @id @db.VarChar(10)
+  nom_pat_par String @db.VarChar(50)
+  nom_mat_par String @db.VarChar(50)
+  ape_pat_par String @db.VarChar(50)
+  ape_mat_par String @db.VarChar(50)
+  email_par String @unique @db.VarChar(255)
+  generar_certificados Generar_Certificados[]
+}
+
 model Product {
   id Int @id @default(autoincrement())
   name String
